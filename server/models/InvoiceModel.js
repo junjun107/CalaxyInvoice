@@ -1,45 +1,41 @@
 const mongoose = require("mongoose");
 
+// Define the schema for the line items
+const lineItemSchema = new mongoose.Schema({
+  productName: { type: String },
+  quantity: { type: Number },
+  unitPrice: { type: Number },
+  subtotal: { type: Number },
+});
+
 const invoiceSchema = new mongoose.Schema(
   {
-    // rate: {
-    //   type: Number,
-    // },
-    // hours: {
-    //   type: Number,
-    // },
     customerName: {
       type: String,
+      required: true,
     },
-    total: {
-      type: Number,
-    },
-    quantity: {
-      type: Number,
-    },
-    productName: {
-      type: String,
-    },
-    unitPrice: {
-      type: Number,
-    },
+    products: [lineItemSchema], // Using an array to store multiple line items
+
     notes: {
       type: String,
     },
-    isPaid: {
-      type: String,
-    },
-    isExpired: {
-      type: String,
-    },
-    status: {
-      type: String,
-    },
+
+    total: { type: Number },
+
     issueDate: {
       type: Date,
     },
     dueDate: {
       type: Date,
+    },
+    isPaid: {
+      type: Boolean,
+    },
+    isExpired: {
+      type: Boolean,
+    },
+    status: {
+      type: String,
     },
   },
   { timestamps: true }

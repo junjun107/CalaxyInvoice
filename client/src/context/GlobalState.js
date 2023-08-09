@@ -25,11 +25,7 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post(
-        "https://calaxy-invoice-web.onrender.com",
-        newInvoice,
-        config
-      );
+      const res = await axios.post("http://localhost:5000", newInvoice, config);
 
       dispatch({
         type: "ADD_INVOICE",
@@ -43,9 +39,10 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
+  // const res = await axios.get("https://calaxy-invoice-web.onrender.com");
   async function getInvoices() {
     try {
-      const res = await axios.get("https://calaxy-invoice-web.onrender.com");
+      const res = await axios.get("http://localhost:5000");
       dispatch({
         type: "GET_INVOICES",
         payload: res.data.data,
@@ -61,7 +58,8 @@ export const GlobalProvider = ({ children }) => {
   async function getInvoice(id) {
     try {
       const res = await axios.get(
-        `https://calaxy-invoice-web.onrender.com/${id}`
+        // `https://calaxy-invoice-web.onrender.com/${id}`
+        `http://localhost:5000/${id}`
       );
 
       dispatch({
@@ -79,7 +77,8 @@ export const GlobalProvider = ({ children }) => {
   async function updateInvoice(id, updatedInvoice) {
     try {
       const res = await axios.patch(
-        `https://calaxy-invoice-web.onrender.com/${id}`,
+        // `https://calaxy-invoice-web.onrender.com/${id}`,
+        `http://localhost:5000/${id}`,
         updatedInvoice
       );
       dispatch({
@@ -96,7 +95,8 @@ export const GlobalProvider = ({ children }) => {
 
   async function deleteInvoice(id) {
     try {
-      await axios.delete(`https://calaxy-invoice-web.onrender.com/${id}`);
+      // await axios.delete(`https://calaxy-invoice-web.onrender.com/${id}`);
+      await axios.delete(`http://localhost:5000/${id}`);
       dispatch({
         type: "DELETE_INVOICE",
         payload: id,

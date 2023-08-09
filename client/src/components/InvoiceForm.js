@@ -80,8 +80,7 @@ const InvoiceForm = () => {
     e.preventDefault();
     const newInvoice = {
       customerName,
-      productName: products.name,
-      unitPrice: products.unitPrice,
+      products,
       notes,
       total: grandTotal,
       issueDate,
@@ -102,8 +101,6 @@ const InvoiceForm = () => {
     setIsPaid(false);
     setStatus("");
   };
-
-  // console.log(invoice);
 
   return (
     <Box sx={{ mt: 3, marginRight: "5%", marginLeft: "5%", px: 1, pt: 2 }}>

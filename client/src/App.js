@@ -4,7 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GlobalProvider } from "./context/GlobalState";
-import InvoiceView from "./components/InvoiceView";
+import InvoiceEdit from "./components/InvoiceEdit";
 
 function App({ children }) {
   return (
@@ -14,7 +14,7 @@ function App({ children }) {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/invoiceform" element={<Invoice />} />
-            <Route path="/:id" element={<InvoiceView />} />
+            <Route path="/:id" element={<InvoiceEdit />} />
           </Routes>
         </Router>
       </GlobalProvider>

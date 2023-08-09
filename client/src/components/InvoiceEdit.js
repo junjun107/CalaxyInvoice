@@ -11,10 +11,28 @@ import {
   TextField,
   Typography,
   Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
-const InvoiceView = () => {
+const InvoiceEdit = () => {
+  const { invoice, getInvoice, updateInvoice } = useContext(GlobalContext);
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    getInvoice(id);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // console.log(invoice);
+
   const [customerName, setCustomerName] = useState("");
   const [products, setProducts] = useState([
     { name: "", quantity: 0, unitPrice: 0 },
@@ -27,10 +45,21 @@ const InvoiceView = () => {
   const [isPaid, setIsPaid] = useState(false);
   const [status, setStatus] = useState("");
 
-  const initialProductState = { name: "", quantity: 0, unitPrice: 0 };
-  const { invoice, getInvoice, updateInvoice } = useContext(GlobalContext);
+  useEffect(() => {
+    if (invoice) {
+      setCustomerName(invoice.customerName || "");
+      // setProducts([{ name: "", quantity: 0, unitPrice: 0 }]);
+      setNotes(invoice.notes || "");
+      setGrandTotal(invoice.total || 0);
+      setIssueDate(dayjs(invoice.issueDate) || "");
+      setDueDate(dayjs(invoice.dueDate) || "");
+      setIsExpired(invoice.isExpired || false);
+      setIsPaid(invoice.isPaid || false);
+      setStatus(invoice.setStatus || "");
+    }
+  }, [invoice]);
 
-  const { id } = useParams();
+  const initialProductState = { name: "", quantity: 0, unitPrice: 0 };
 
   const calculateSubtotal = (quantity, unitPrice) => {
     const subtotal = quantity * unitPrice;
@@ -76,18 +105,6 @@ const InvoiceView = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueDate, dueDate, isPaid, isExpired]);
 
-  useEffect(() => {
-    getInvoice(id);
-
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (invoice) {
-      setCustomerName(invoice.customerName);
-    }
-  }, [invoice]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const updatedInvoice = {
@@ -102,18 +119,18 @@ const InvoiceView = () => {
       status,
     };
     updateInvoice(id, updatedInvoice);
-    setCustomerName("");
-    setProducts([initialProductState]);
-    setNotes("");
-    setGrandTotal(0);
-    setIssueDate("");
-    setDueDate("");
-    setIsExpired(false);
-    setIsPaid(false);
-    setStatus("");
+
+    // setCustomerName("");
+    // setProducts([initialProductState]);
+    // setNotes("");
+    // setGrandTotal(0);
+    // setIssueDate("");
+    // setDueDate("");
+    // setIsExpired(false);
+    // setIsPaid(false);
+    // setStatus("");
   };
 
-  // console.log(invoice);
   return (
     <Box mx={2} my={2}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -122,7 +139,6 @@ const InvoiceView = () => {
         </Button>
         <Chip label={invoice._id} variant="outlined" color="primary" />
       </Box>
-
       <form onSubmit={handleSubmit}>
         <Grid display="flex" justifyContent="space-between" sx={{ mb: 6 }}>
           <Grid item xs={12} sm={6}>
@@ -285,6 +301,53 @@ const InvoiceView = () => {
           Add a new line
         </Button>
 
+        {/* <table>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Subtotal</th>
+          </tr>
+          {invoice.products.map((product, key) => (
+            <tr key={product._id}>
+              <td>{product.productName}</td>
+              <td>{product.quantity}</td>
+              <td>{product.unitPrice}</td>
+              <td>{product.subtotal}</td>
+            </tr>
+          ))}
+        </table> */}
+
+        {/* <TableContainer component={Paper} sx={{ marginBottom: 4 }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Product Name</TableCell>
+                <TableCell align="right">Qty</TableCell>
+                <TableCell align="right">Unit Price</TableCell>
+                <TableCell align="right">Total&nbsp;($)</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {invoice &&
+                invoice.products.map((product) => (
+                  <TableRow
+                    key={product.productName}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {product.productName}
+                    </TableCell>
+                    <TableCell align="right">{product.quantity}</TableCell>
+                    <TableCell align="right">{product.unitPrice}</TableCell>
+                    <TableCell align="right">{product.subtotal}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer> */}
+
         <Grid container justifyContent="space-between" sx={{ p: 2 }}>
           <Grid item xs={12} sm={6}>
             <InputLabel
@@ -339,4 +402,4 @@ const InvoiceView = () => {
   );
 };
 
-export default InvoiceView;
+export default InvoiceEdit;

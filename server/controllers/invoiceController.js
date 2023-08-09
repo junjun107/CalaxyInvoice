@@ -36,8 +36,8 @@ exports.getInvoice = async (req, res, next) => {
 
 exports.addInvoice = async (req, res, next) => {
   try {
-    const { rate, hours } = req.body;
     const invoice = await Invoice.create(req.body);
+    // console.log(req.body);
     return res.status(201).json({
       success: true,
       data: invoice,
@@ -52,7 +52,7 @@ exports.addInvoice = async (req, res, next) => {
     } else {
       return res.status(500).json({
         success: false,
-        error: "Server Error",
+        error: error,
       });
     }
   }
