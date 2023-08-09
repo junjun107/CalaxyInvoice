@@ -119,9 +119,9 @@ const Home = () => {
       }}
     >
       <Box mx={2} my={2} sx={{}}>
-        <Button variant="contained" href="/invoiceform">
+        <Button variant="contained" to="/invoiceform" component={Link}>
           <AddIcon />
-          Add Invoic
+          Add Invoice
         </Button>
       </Box>
 
