@@ -5,6 +5,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { GlobalProvider } from "./context/GlobalState";
 import InvoiceEdit from "./components/InvoiceEdit";
+import InvoiceView from "./components/InvoiceView";
 
 function App({ children }) {
   return (
@@ -15,6 +16,7 @@ function App({ children }) {
             <Route path="/" element={<Home />} />
             <Route path="/invoiceform" element={<Invoice />} />
             <Route path="/:id" element={<InvoiceEdit />} />
+            <Route path="/:id/view" element={<InvoiceView />} />
           </Routes>
         </Router>
       </GlobalProvider>

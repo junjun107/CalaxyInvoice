@@ -78,9 +78,15 @@ const InvoiceForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const lineItems = products.map((product) => ({
+      productName: product.name,
+      quantity: product.quantity,
+      unitPrice: product.unitPrice,
+      subtotal: calculateSubtotal(product.quantity, product.unitPrice),
+    }));
     const newInvoice = {
       customerName,
-      products,
+      products: lineItems,
       notes,
       total: grandTotal,
       issueDate,
@@ -90,7 +96,6 @@ const InvoiceForm = () => {
       status,
     };
     addInvoice(newInvoice);
-
     setCustomerName("");
     setProducts([initialProductState]);
     setNotes("");

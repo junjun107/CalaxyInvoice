@@ -1,6 +1,6 @@
 import { GlobalContext } from "../context/GlobalState";
 import React, { useEffect, useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -23,20 +23,19 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 
 const InvoiceEdit = () => {
-  const { invoice, getInvoice, updateInvoice } = useContext(GlobalContext);
+  const { invoice, getInvoice, updateInvoice, deleteInvoice } =
+    useContext(GlobalContext);
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getInvoice(id);
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // console.log(invoice);
 
   const [customerName, setCustomerName] = useState("");
-  const [products, setProducts] = useState([
-    { name: "", quantity: 0, unitPrice: 0 },
-  ]);
+  const [products, setProducts] = useState([]);
   const [notes, setNotes] = useState("");
   const [grandTotal, setGrandTotal] = useState(0);
   const [issueDate, setIssueDate] = useState("");
@@ -48,7 +47,7 @@ const InvoiceEdit = () => {
   useEffect(() => {
     if (invoice) {
       setCustomerName(invoice.customerName || "");
-      // setProducts([{ name: "", quantity: 0, unitPrice: 0 }]);
+      setProducts(invoice.setProducts || []);
       setNotes(invoice.notes || "");
       setGrandTotal(invoice.total || 0);
       setIssueDate(dayjs(invoice.issueDate) || "");
@@ -59,7 +58,7 @@ const InvoiceEdit = () => {
     }
   }, [invoice]);
 
-  const initialProductState = { name: "", quantity: 0, unitPrice: 0 };
+  const initialProductState = { productName: "", quantity: 0, unitPrice: 0 };
 
   const calculateSubtotal = (quantity, unitPrice) => {
     const subtotal = quantity * unitPrice;
@@ -73,16 +72,22 @@ const InvoiceEdit = () => {
     setGrandTotal(grandTotal.toFixed(2));
     return grandTotal.toFixed(2); // Convert to a string with 2 decimal places
   };
+
   const handleProductChange = (index, field, value) => {
     const updatedProducts = [...products];
-    updatedProducts[index][field] = value;
+    updatedProducts[index] = {
+      ...updatedProducts[index],
+      [field]: value,
+    };
     setProducts(updatedProducts);
 
     calculateGrandTotal();
   };
 
   const handleAddProduct = () => {
-    setProducts([...products, { name: "", quantity: 0, unitPrice: 0 }]);
+    const newProduct = { productName: "", quantity: 0, unitPrice: 0 };
+    setProducts([...products, newProduct]);
+
     calculateGrandTotal();
   };
 
@@ -110,9 +115,10 @@ const InvoiceEdit = () => {
     const updatedInvoice = {
       id: invoice._id,
       customerName,
-      productName: products.name,
+      // productName: products.productName,
       unitPrice: products.unitPrice,
       notes,
+
       total: grandTotal,
       isExpired,
       isPaid,
@@ -120,17 +126,22 @@ const InvoiceEdit = () => {
     };
     updateInvoice(id, updatedInvoice);
 
-    // setCustomerName("");
-    // setProducts([initialProductState]);
-    // setNotes("");
-    // setGrandTotal(0);
-    // setIssueDate("");
-    // setDueDate("");
-    // setIsExpired(false);
-    // setIsPaid(false);
-    // setStatus("");
+    setCustomerName("");
+    setProducts([initialProductState]);
+    setNotes("");
+    setGrandTotal(0);
+    setIssueDate("");
+    setDueDate("");
+    setIsExpired(false);
+    setIsPaid(false);
+    setStatus("");
   };
 
+  const handleDelete = () => {
+    deleteInvoice(invoice._id);
+    navigate("/");
+  };
+  console.log(invoice);
   return (
     <Box mx={2} my={2}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -228,7 +239,7 @@ const InvoiceEdit = () => {
                 type="text"
                 value={product.name}
                 onChange={(e) =>
-                  handleProductChange(index, "name", e.target.value)
+                  handleProductChange(index, "productName", e.target.value)
                 }
               />
             </Grid>
@@ -301,24 +312,7 @@ const InvoiceEdit = () => {
           Add a new line
         </Button>
 
-        {/* <table>
-          <tr>
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Subtotal</th>
-          </tr>
-          {invoice.products.map((product, key) => (
-            <tr key={product._id}>
-              <td>{product.productName}</td>
-              <td>{product.quantity}</td>
-              <td>{product.unitPrice}</td>
-              <td>{product.subtotal}</td>
-            </tr>
-          ))}
-        </table> */}
-
-        {/* <TableContainer component={Paper} sx={{ marginBottom: 4 }}>
+        <TableContainer component={Paper} sx={{ marginBottom: 4 }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -330,7 +324,7 @@ const InvoiceEdit = () => {
             </TableHead>
 
             <TableBody>
-              {invoice &&
+              {invoice.products &&
                 invoice.products.map((product) => (
                   <TableRow
                     key={product.productName}
@@ -346,7 +340,7 @@ const InvoiceEdit = () => {
                 ))}
             </TableBody>
           </Table>
-        </TableContainer> */}
+        </TableContainer>
 
         <Grid container justifyContent="space-between" sx={{ p: 2 }}>
           <Grid item xs={12} sm={6}>
@@ -392,9 +386,21 @@ const InvoiceEdit = () => {
           </Grid>
         </Grid>
 
-        <Grid display="flex" justifyContent="center">
+        <Grid display="flex" justifyContent="center" gap={2}>
+          <Button
+            variant="contained"
+            type="submit"
+            color="error"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
           <Button variant="contained" type="submit">
             Update Invoice
+          </Button>
+
+          <Button variant="contained" href="/:id/view">
+            Print
           </Button>
         </Grid>
       </form>
