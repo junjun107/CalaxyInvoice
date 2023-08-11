@@ -14,6 +14,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../context/GlobalState";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const InvoiceForm = () => {
   const [customerName, setCustomerName] = useState("");
@@ -110,14 +111,19 @@ const InvoiceForm = () => {
   return (
     <Box sx={{ mt: 3, marginRight: "5%", marginLeft: "5%", px: 1, pt: 2 }}>
       <Box sx={{ my: 5 }}>
-        <Button variant="contained" href="/">
+        <Button
+          variant="contained"
+          href="/"
+          style={{ width: 200, height: 40 }}
+          startIcon={<ArrowBackIcon />}
+        >
           Home
         </Button>
       </Box>
 
       <form onSubmit={handleSubmit}>
-        <Grid display="flex" justifyContent="space-between" sx={{ mb: 6 }}>
-          <Grid item xs={12} sm={6}>
+        <Grid container justifyContent="space-between" sx={{ mb: 6 }}>
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -138,11 +144,15 @@ const InvoiceForm = () => {
             item
             xs={12}
             sm={6}
+            md={3}
             sx={{
               mt: 4,
             }}
           >
             <FormControlLabel
+              sx={{
+                mb: 3,
+              }}
               checked={isPaid}
               control={<Checkbox />}
               label="Payment Received"
@@ -152,7 +162,7 @@ const InvoiceForm = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -170,7 +180,7 @@ const InvoiceForm = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -271,6 +281,7 @@ const InvoiceForm = () => {
           variant="contained"
           type="button"
           onClick={handleAddProduct}
+          style={{ width: 200, height: 40 }}
           sx={{
             my: 3,
           }}
@@ -279,7 +290,7 @@ const InvoiceForm = () => {
         </Button>
 
         <Grid container spacing={2} mt={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} lg={4}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -324,7 +335,7 @@ const InvoiceForm = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} lg={4}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -345,7 +356,7 @@ const InvoiceForm = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} lg={4}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -368,8 +379,12 @@ const InvoiceForm = () => {
           </Grid>
         </Grid>
 
-        <Grid display="flex" justifyContent="center">
-          <Button variant="contained" type="submit">
+        <Grid display="flex" justifyContent="center" my={4}>
+          <Button
+            variant="contained"
+            type="submit"
+            style={{ width: 200, height: 40 }}
+          >
             Save Invoice
           </Button>
         </Grid>

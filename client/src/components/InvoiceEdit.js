@@ -1,6 +1,6 @@
 import { GlobalContext } from "../context/GlobalState";
 import React, { useEffect, useContext, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const InvoiceEdit = () => {
   const { invoice, getInvoice, updateInvoice, deleteInvoice } =
@@ -34,6 +35,8 @@ const InvoiceEdit = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log(invoice);
+  
   const [customerName, setCustomerName] = useState("");
   const [products, setProducts] = useState([]);
   const [notes, setNotes] = useState("");
@@ -47,7 +50,7 @@ const InvoiceEdit = () => {
   useEffect(() => {
     if (invoice) {
       setCustomerName(invoice.customerName || "");
-      setProducts(invoice.setProducts || []);
+      setProducts(invoice.products || []);
       setNotes(invoice.notes || "");
       setGrandTotal(invoice.total || 0);
       setIssueDate(dayjs(invoice.issueDate) || "");
@@ -62,7 +65,7 @@ const InvoiceEdit = () => {
 
   const calculateSubtotal = (quantity, unitPrice) => {
     const subtotal = quantity * unitPrice;
-    return subtotal.toFixed(2); // Convert to a string with 2 decimal places
+    return subtotal.toFixed(2);
   };
   const calculateGrandTotal = () => {
     const grandTotal = products.reduce((total, product) => {
@@ -70,7 +73,7 @@ const InvoiceEdit = () => {
       return total + subtotal;
     }, 0);
     setGrandTotal(grandTotal.toFixed(2));
-    return grandTotal.toFixed(2); // Convert to a string with 2 decimal places
+    return grandTotal.toFixed(2);
   };
 
   const handleProductChange = (index, field, value) => {
@@ -110,16 +113,48 @@ const InvoiceEdit = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueDate, dueDate, isPaid, isExpired]);
 
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const updatedInvoice = {
+  //     id: invoice._id,
+  //     customerName,
+  //     // productName: products.productName,
+  //     unitPrice: products.unitPrice,
+  //     notes,
+
+  //     total: grandTotal,
+  //     isExpired,
+  //     isPaid,
+  //     status,
+  //   };
+  //   updateInvoice(id, updatedInvoice);
+
+  //   setCustomerName("");
+  //   setProducts([initialProductState]);
+  //   setNotes("");
+  //   setGrandTotal(0);
+  //   setIssueDate("");
+  //   setDueDate("");
+  //   setIsExpired(false);
+  //   setIsPaid(false);
+  //   setStatus("");
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedInvoice = {
-      id: invoice._id,
-      customerName,
-      // productName: products.productName,
-      unitPrice: products.unitPrice,
-      notes,
+    const lineItems = products.map((product) => ({
+      productName: product.productName,
+      quantity: product.quantity,
+      unitPrice: product.unitPrice,
+      subtotal: calculateSubtotal(product.quantity, product.unitPrice),
+    }));
 
+    const updatedInvoice = {
+      customerName,
+      products: lineItems,
+      notes,
       total: grandTotal,
+      issueDate,
+      dueDate,
       isExpired,
       isPaid,
       status,
@@ -136,23 +171,49 @@ const InvoiceEdit = () => {
     setIsPaid(false);
     setStatus("");
   };
-
   const handleDelete = () => {
     deleteInvoice(invoice._id);
     navigate("/");
   };
-  console.log(invoice);
+
   return (
-    <Box mx={2} my={2}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button variant="contained" href="/" sx={{ mb: 4 }}>
-          Home
-        </Button>
-        <Chip label={invoice._id} variant="outlined" color="primary" />
-      </Box>
+    <Box sx={{ mt: 3, marginRight: "5%", marginLeft: "5%", px: 1, pt: 2 }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6} lg={6}>
+          <Button
+            variant="contained"
+            href="/"
+            sx={{ mb: 4 }}
+            style={{ width: 200, height: 40 }}
+            startIcon={<ArrowBackIcon />}
+          >
+            Home
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} md={6} lg={6} mb={2}>
+          <Chip
+            label={invoice._id}
+            variant="outlined"
+            color="primary"
+            sx={{
+              fontSize: 20,
+              width: "100%",
+              textAlign: "center",
+            }}
+          />
+        </Grid>
+      </Grid>
+
       <form onSubmit={handleSubmit}>
-        <Grid display="flex" justifyContent="space-between" sx={{ mb: 6 }}>
-          <Grid item xs={12} sm={6}>
+        <Grid
+          container
+          justifyContent="space-between"
+          sx={{ mb: 6 }}
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+        >
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -172,6 +233,7 @@ const InvoiceEdit = () => {
             item
             xs={12}
             sm={6}
+            md={3}
             sx={{
               mt: 4,
             }}
@@ -186,7 +248,7 @@ const InvoiceEdit = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -204,7 +266,7 @@ const InvoiceEdit = () => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={6} md={3}>
             <InputLabel
               sx={{
                 display: "flex",
@@ -224,7 +286,7 @@ const InvoiceEdit = () => {
         </Grid>
 
         {products.map((product, index) => (
-          <Grid container key={index} display="flex" gap={3} sx={{ my: 1 }}>
+          <Grid container key={index} gap={3} sx={{ my: 1 }} rowSpacing={2}>
             <Grid item xs={12} sm={3}>
               <InputLabel
                 sx={{
@@ -237,7 +299,7 @@ const InvoiceEdit = () => {
               </InputLabel>
               <TextField
                 type="text"
-                value={product.name}
+                value={product.productName}
                 onChange={(e) =>
                   handleProductChange(index, "productName", e.target.value)
                 }
@@ -308,6 +370,7 @@ const InvoiceEdit = () => {
           sx={{
             my: 3,
           }}
+          style={{ width: 200, height: 40 }}
         >
           Add a new line
         </Button>
@@ -386,22 +449,43 @@ const InvoiceEdit = () => {
           </Grid>
         </Grid>
 
-        <Grid display="flex" justifyContent="center" gap={2}>
-          <Button
-            variant="contained"
-            type="submit"
-            color="error"
-            onClick={handleDelete}
-          >
-            Delete
-          </Button>
-          <Button variant="contained" type="submit">
-            Update Invoice
-          </Button>
+        <Grid
+          container
+          my={2}
+          rowSpacing={1}
+          columnSpacing={{ xs: 1, sm: 2, md: 2 }}
+        >
+          <Grid item xs={12} md={4}>
+            <Button
+              variant="contained"
+              type="submit"
+              color="error"
+              onClick={handleDelete}
+              style={{ width: 200, height: 40 }}
+            >
+              Delete
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button
+              variant="contained"
+              type="submit"
+              style={{ width: 200, height: 40 }}
+            >
+              Update Invoice
+            </Button>
+          </Grid>
 
-          <Button variant="contained" href="/:id/view">
-            Print
-          </Button>
+          <Grid item xs={12} md={4}>
+            <Button
+              variant="contained"
+              to={`/${invoice._id}/view`}
+              component={Link}
+              style={{ width: 200, height: 40 }}
+            >
+              Print
+            </Button>
+          </Grid>
         </Grid>
       </form>
     </Box>

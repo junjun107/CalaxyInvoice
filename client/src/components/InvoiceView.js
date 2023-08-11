@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Chip,
   Divider,
   Grid,
@@ -11,14 +12,15 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Typography,
 } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { GlobalContext } from "../context/GlobalState";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const InvoiceView = () => {
-  const { invoice, getInvoice, updateInvoice } = useContext(GlobalContext);
+  const { invoice, getInvoice } = useContext(GlobalContext);
 
   const { id } = useParams();
 
@@ -28,6 +30,14 @@ const InvoiceView = () => {
   }, []);
   return (
     <Box mx={20}>
+      <Button
+        variant="contained"
+        href="/"
+        sx={{ my: 4 }}
+        startIcon={<ArrowBackIcon />}
+      >
+        Home
+      </Button>
       <Grid
         container
         rowSpacing={1}
@@ -35,7 +45,7 @@ const InvoiceView = () => {
         justifyContent="space-between"
         sx={{ my: 4 }}
       >
-        <grid item xs={6}>
+        <Grid item xs={6}>
           <img
             src="https://media.licdn.com/dms/image/C560BAQGewMpf2zjNYw/company-logo_200_200/0/1641488670873?e=1699488000&v=beta&t=852ssZPdidERTpE5f_-3IctivtWmIFl7wFC60goA-20"
             alt="logo"
@@ -45,8 +55,8 @@ const InvoiceView = () => {
             123 Story Dr. Suit 1003 <br />
             Dreamland, CA, 91101
           </Typography>
-        </grid>
-        <grid item xs={6}>
+        </Grid>
+        <Grid item xs={6}>
           <Typography variant="h1" gutterBottom>
             Invoice
           </Typography>
@@ -58,7 +68,7 @@ const InvoiceView = () => {
               {invoice._id}
             </Typography>
           </Box>
-        </grid>
+        </Grid>
       </Grid>
 
       <TableContainer component={Paper} sx={{ marginBottom: 4 }}>
